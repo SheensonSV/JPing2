@@ -1,9 +1,10 @@
 import Exceptions.EmptyLineException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadedIPFromConsole
+public class LoadedIPFromConsole implements LoadedIP
 {
     public List<String> ipAddresses = new ArrayList<>();
     public String lineWithIPAddresses;
@@ -13,7 +14,8 @@ public class LoadedIPFromConsole
         this.lineWithIPAddresses = lineWithIPAddresses;
     }
 
-    public List<String> getAllIPFromFileInList() throws EmptyLineException
+    @Override
+    public List<String> getAllIP() throws EmptyLineException
     {
         String[] ips = lineWithIPAddresses.split("\\s");
         for (String ip : ips)

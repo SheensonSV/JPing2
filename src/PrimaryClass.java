@@ -28,89 +28,30 @@ import java.util.Scanner;
 
 public class PrimaryClass
 {
+    private static String fileName = "";
+    private static int timeOut;
+    private static List<String> ipList;
+
     public static void main(String[] args)
     {
-        String fileName = "";
-        int timeOut;
-        List<String> ipList;
-
         System.out.println("JPing v2.1." +
                 "\nFollow the instructions below.");
-        for (;;)
-        {
-            System.out.print("Please enter file name to save: > ");
-            String userAnswerFileName = new Scanner(System.in).next();
-            if (!CheckingPull.checkingFileNameString(userAnswerFileName))
-            {
-                System.out.println("Wrong answer");
-                continue;
-            }
-            try {
-                new NewLogFile( userAnswerFileName ).creating();
-                fileName = userAnswerFileName;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            break;
-        }
+        enteringFileNameToSave();
 
-        for (;;)
-        {
-            System.out.print("Enter timeOut for Ping: > ");
-            String userAnswerTimeOut = new Scanner(System.in).next();
-            if (!CheckingPull.checkOfTIMEOUTInArguments(userAnswerTimeOut))
-            {
-                System.out.println("Wrong answer!");
-                continue;
-            }
-            timeOut = Integer.parseInt(userAnswerTimeOut);
-            break;
-        }
+        enteringTimeOutForPing();
 
-        for (;;)
-        {
-            System.out.print("Do you wont to load IP's from file? Yes(y) / No(n) : > ");
-            String userAnswerYesOrNo = new Scanner(System.in).next();
-            if (userAnswerYesOrNo.equalsIgnoreCase("yes") || userAnswerYesOrNo.equalsIgnoreCase("y"))
-            {
-                for (;;)
-                {
-                    System.out.print("Enter file name >");
-                    String pathToFile = new Scanner(System.in).next();
-                    try {
-                        ipList = new LoadedIPFromFile(pathToFile).getAllIPFromFileToList();
-                    } catch (IOException | EmptyFileException e) {
-                        System.out.println(e.getMessage());
-                        continue;
-                    }
-                    break;
-                }
-                break;
-            }
-            if (userAnswerYesOrNo.equalsIgnoreCase("no") || userAnswerYesOrNo.equalsIgnoreCase("n"))
-            {
-                for (;;)
-                {
-                    System.out.print("Enter IPs use space divider (example: 192.168.0.1 10.1.1.1 172.16.1.1) \n> ");
-                    String userAnswer = new Scanner(System.in).nextLine();
-                    try {
-                        ipList = new LoadedIPFromConsole(userAnswer).getAllIPFromFileInList();
-                    } catch (EmptyLineException e) {
-                        System.out.println(e.getMessage());
-                        continue;
-                    }
-                    break;
-                }
-                break;
-            }
-            System.out.println("Wrong answer! Please repeat.");
-        }
+        selectFileOrConsole();
 
         for (String ip : ipList) {
             new Thread(new Ping(ip, timeOut)).start();
         }
 
+        exitAnyTimeAndSavingDataToFile();
+    }
+
+    private static void exitAnyTimeAndSavingDataToFile()
+    {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String s;
@@ -137,6 +78,86 @@ public class PrimaryClass
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void selectFileOrConsole()
+    {
+        for (;;)
+        {
+            System.out.print("Do you wont to load IP's from file? Yes(y) / No(n) : > ");
+            String userAnswerYesOrNo = new Scanner(System.in).next();
+            if (userAnswerYesOrNo.equalsIgnoreCase("yes") || userAnswerYesOrNo.equalsIgnoreCase("y"))
+            {
+                for (;;)
+                {
+                    System.out.print("Enter file name >");
+                    String pathToFile = new Scanner(System.in).next();
+                    try {
+                        ipList = new LoadedIPFromFile(pathToFile).getAllIP();
+                    } catch (IOException | EmptyFileException e) {
+                        System.out.println(e.getMessage());
+                        continue;
+                    }
+                    break;
+                }
+                break;
+            }
+            if (userAnswerYesOrNo.equalsIgnoreCase("no") || userAnswerYesOrNo.equalsIgnoreCase("n"))
+            {
+                for (;;)
+                {
+                    System.out.print("Enter IPs use space divider (example: 192.168.0.1 10.1.1.1 172.16.1.1) \n> ");
+                    String userAnswer = new Scanner(System.in).nextLine();
+                    try {
+                        ipList = new LoadedIPFromConsole(userAnswer).getAllIP();
+                    } catch (EmptyLineException e) {
+                        System.out.println(e.getMessage());
+                        continue;
+                    }
+                    break;
+                }
+                break;
+            }
+            System.out.println("Wrong answer! Please repeat.");
+        }
+    }
+
+    private static void enteringTimeOutForPing()
+    {
+        for (;;)
+        {
+            System.out.print("Enter timeOut for Ping: > ");
+            String userAnswerTimeOut = new Scanner(System.in).next();
+            if (!CheckingPull.checkOfTIMEOUTInArguments(userAnswerTimeOut))
+            {
+                System.out.println("Wrong answer!");
+                continue;
+            }
+            timeOut = Integer.parseInt(userAnswerTimeOut);
+            break;
+        }
+    }
+
+    private static void enteringFileNameToSave()
+    {
+        for (;;)
+        {
+            System.out.print("Please enter file name to save: > ");
+            String userAnswerFileName = new Scanner(System.in).next();
+            if (!CheckingPull.checkingFileNameString(userAnswerFileName))
+            {
+                System.out.println("Wrong answer");
+                continue;
+            }
+            try {
+                new NewLogFile( userAnswerFileName ).creating();
+                fileName = userAnswerFileName;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            break;
         }
     }
 }

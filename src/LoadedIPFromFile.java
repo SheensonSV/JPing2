@@ -7,14 +7,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadedIPFromFile {
+public class LoadedIPFromFile implements LoadedIP
+{
     public List<String> ipAddresses = new ArrayList<>();
     public String fileName;
+
     LoadedIPFromFile(String fileName){
         this.fileName = fileName;
     }
 
-    public List<String> getAllIPFromFileToList() throws IOException, EmptyFileException {
+    @Override
+    public List<String> getAllIP() throws IOException, EmptyFileException {
         File file = new File(fileName);
         if (!file.exists()) {
             throw new IOException("File is not Exist");
