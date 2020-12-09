@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-public class PrimaryClass
+public class Main
 {
     private static String fileName = "";
     private static int timeOut;
